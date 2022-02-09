@@ -128,7 +128,9 @@ class HugeUploader {
             if (res.status === 200 || res.status === 201 || res.status === 204) {
                 if (++this.chunkCount < this.totalChunks) this._sendChunks();
                 else 
-                    this._eventTarget.dispatchEvent(new CustomEvent('finish', { detail: res.body }));
+                  res.json().then(body => {
+                    this._eventTarget.dispatchEvent(new CustomEvent('finish', { detail: body }));
+                  });
 
                 const percentProgress = Math.round((100 / this.totalChunks) * this.chunkCount);
                 this._eventTarget.dispatchEvent(new CustomEvent('progress', { detail: percentProgress }));
